@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "value": "tu"
+    },
+    "serviceName": {
+      "value": "sf"
+    },
+    "environmentName": {
+      "value": "test"
+    },
+    "adminUserName": {
+      "value": "furyd"
+    },
+    "adminPassword": {
+      "value": "TestingTesting123!"
+    },
+    "certificateThumbprint": {
+      "value": "C7C6C6FA2079CBDCC10771F9A7A097F86899A153"
+    },
+    "dnsName": {
+      "value": "bob"
+    }
+  }
+}
