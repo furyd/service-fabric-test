@@ -1,0 +1,64 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- powershell: 'dir env:'
+  displayName: Output variables
+
+- task: DotNetCoreCLI@2
+  displayName: Restore NuGet for .NET projects
+    command: restore
+    projects: 'src/**/*.csproj'
+
+- task: NuGetCommand@2
+  displayName: Restore NuGet for Service Fabric projects
+  inputs:
+    restoreSolution: src/**/*.sfproj
+    restoreDirectory: ../../
+
+- task: DotNetCoreCLI@2
+  displayName: Publish Service Fabric Project
+  inputs:
+    projects: $(packageProjects)
+    packDirectory: $(Build.ArtifactStagingDirectory)\\drop\\package
+    arguments: '-c Release /p:Platform=x64 /p:Version=$(Build.BuildNumber) /t:Package /p:PackageLocation=$(Build.ArtifactStagingDirectory)\drop\package'
+
+- task: ServiceFabricUpdateManifests@2
+  displayName: Update Service Fabric Version (Release)
+  inputs:
+    applicationPackagePath: $(Build.ArtifactStagingDirectory)\\drop\\package
+    versionSuffix: $(Build.BuildNumber)
+    versionBehavior: Replace
+
+- task: CopyFiles@2
+  displayName: Copy XML Files To Artifacts (Release)
+  inputs:
+    SourceFolder: 'src\'
+    Contents: |
+     **\*.ServiceFabric\PublishProfiles\*.xml
+     **\*.ServiceFabric\ApplicationParameters\*.xml
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\drop\projectartifacts\'
+    CleanTargetFolder: true
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Package
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)\\drop\\package
+    ArtifactName: package
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@4
+  displayName: Replace tokens in parameters
+  inputs:
+    rootDirectory: deploy
+    targetFiles: '**/*.parameters.devops.json'
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish ARM Templates
+  inputs:
+    PathtoPublish: deploy
+    ArtifactName: ARM Templates
