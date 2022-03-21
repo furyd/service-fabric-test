@@ -16,7 +16,7 @@ steps:
   displayName: 'Calculate SemVer'
   inputs:
     useConfigFile: true
-    configFilePath: $(System.DefaultWorkingDirectory)/build/GitVersion.yml'
+    configFilePath: $(System.DefaultWorkingDirectory)\build\GitVersion.yml
 
 - powershell: 'dir env:'
   displayName: Output variables
