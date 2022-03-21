@@ -7,6 +7,14 @@ pool:
   vmImage: windows-latest
 
 steps:
+- task: gitversion/setup@0
+  displayName: 'Install GitTools'
+  inputs:
+  versionSpec: '5.3.x'
+
+- task: gitversion/execute@0
+  displayName: 'Calculate SemVer'
+
 - powershell: 'dir env:'
   displayName: Output variables
 
