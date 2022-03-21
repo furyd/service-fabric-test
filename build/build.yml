@@ -16,6 +16,7 @@ steps:
   displayName: 'Calculate SemVer'
   inputs:
     useConfigFile: true
+    configFilePath: $(System.DefaultWorkingDirectory)/build/GetVersion.yml'
 
 - powershell: 'dir env:'
   displayName: Output variables
