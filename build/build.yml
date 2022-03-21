@@ -20,7 +20,7 @@ steps:
   displayName: Restore NuGet for Service Fabric projects
   inputs:
     restoreSolution: src/**/*.sfproj
-    restoreDirectory: ../../
+    restoreDirectory: ../../packages
 
 - task: DotNetCoreCLI@2
   displayName: Publish Service Fabric Project
