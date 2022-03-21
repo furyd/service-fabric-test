@@ -25,7 +25,7 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: Publish Service Fabric Project
   inputs:
-    projects: $(packageProjects)
+    projects: src/**/*.sfproj
     packDirectory: $(Build.ArtifactStagingDirectory)\\drop\\package
     arguments: '-c Release /p:Platform=x64 /p:Version=$(Build.BuildNumber) /t:Package /p:PackageLocation=$(Build.ArtifactStagingDirectory)\drop\package'
 
