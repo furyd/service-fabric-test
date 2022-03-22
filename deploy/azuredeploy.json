@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectName": {
@@ -177,7 +177,6 @@
     "prefix": "[concat(parameters('projectName'), '-', parameters('serviceName'), '-')]",
     "safePrefix": "[concat(parameters('projectName'), parameters('serviceName'))]",
     "vmssApiVersion": "2017-03-30",
-    "sfrpApiVersion": "2018-02-01",
     "lbApiVersion": "2015-06-15",
     "vNetApiVersion": "2015-06-15",
     "storageApiVersion": "2016-01-01",
@@ -189,7 +188,6 @@
     "lbProbeID0": "[concat(variables('lbID0'),'/probes/FabricGatewayProbe')]",
     "lbHttpProbeID0": "[concat(variables('lbID0'),'/probes/FabricHttpGatewayProbe')]",
     "lbNatPoolID0": "[concat(variables('lbID0'),'/inboundNatPools/LoadBalancerBEAddressNatPool')]",
-    "vmStorageAccountName0": "[toLower(concat(uniqueString(resourceGroup().id), '1', '0' ))]",
     "location": "[resourceGroup().location]",
     "keyVaultName": "[concat(variables('prefix'), 'kv-', parameters('environmentName'))]",
     "certificateName": "[concat(variables('prefix'), 'cert-', parameters('environmentName'))]",
@@ -562,15 +560,6 @@
           "tableEndpoint": "[reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), variables('storageApiVersion')).primaryEndpoints.table]"
         },
         "fabricSettings": [
-          {
-            "parameters": [
-              {
-                "name": "ClusterProtectionLevel",
-                "value": "EncryptAndSign"
-              }
-            ],
-            "name": "Security"
-          },
           {
             "parameters": [
               {
