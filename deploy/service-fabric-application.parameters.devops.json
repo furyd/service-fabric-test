@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "value": "#{arm.project.name}#"
+    },
+    "serviceName": {
+      "value": "#{arm.service.name}#"
+    },
+    "environmentName": {
+      "value": "#{arm.environment.name}#"
+    },
+    "appPackageUrl": {
+      "value": "#{arm.package.uri}#"
+    },
+    "applicationName": {
+      "value": "#{arm.application.name}#"
+    },
+    "applicationTypeName": {
+      "value": "#{arm.application.type.name}#"
+    },
+    "applicationTypeVersion": {
+      "value": "#{arm.application.type.version}#"
+    },
+    "serviceTypeName": {
+      "value": "#{arm.service.type.name}#"
+    },
+    "instanceCount": {
+      "value": "#{arm.instanceCount}#"
+    }
+  }
+}

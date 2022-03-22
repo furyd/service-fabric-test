@@ -1,0 +1,135 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "projectName": {
+            "type": "string"
+        },
+        "serviceName": {
+            "type": "string"
+        },
+        "environmentName": {
+            "type": "string"
+        },
+        "appPackageUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "The URL to the application package sfpkg file."
+            }
+        },
+        "applicationName": {
+            "type": "string",
+            "defaultValue": "MyApplication",
+            "metadata": {
+                "description": "The application name."
+            }
+        },
+        "applicationTypeName": {
+            "type": "string",
+            "defaultValue": "MyApplicationType",
+            "metadata": {
+                "description": "The application type name."
+            }
+        },
+        "applicationTypeVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "The application type version."
+            }
+        },
+        "serviceTypeName": {
+            "type": "string",
+            "metadata": {
+                "description": "The application type version."
+            }
+        },
+        "instanceCount": {
+            "type": "int",
+            "defaultValue": -1,
+            "metadata": {
+                "description": "Count of instances."
+            }
+        }
+    },
+    "variables": {
+        "prefix": "[concat(parameters('projectName'), '-', parameters('serviceName'), '-')]",
+        "location": "[resourceGroup().location]",
+        "clusterName": "[concat(variables('prefix'), 'cluster-', parameters('environmentName'))]",
+        "sfApiVersion": "2021-06-01"
+    },
+    "resources": [
+        {
+            "name": "[format('{0}/{1}', variables('clusterName'), parameters('applicationTypeName'))]",
+            "apiVersion": "[variables('sfApiVersion')]",
+            "type": "Microsoft.ServiceFabric/clusters/applicationTypes",
+            "location": "[variables('location')]",
+            "properties": {
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[format('{0}/{1}/{2}', variables('clusterName'), parameters('applicationTypeName'), parameters('applicationTypeVersion'))]",
+            "apiVersion": "[variables('sfApiVersion')]",
+            "type": "Microsoft.ServiceFabric/clusters/applicationTypes/versions",
+            "location": "[variables('location')]",
+            "properties": {
+                "appPackageUrl": "[parameters('appPackageUrl')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.ServiceFabric/clusters/', variables('clusterName'), '/applicationTypes/', parameters('applicationTypeName'))]"
+            ]
+        },
+        {
+            "name": "[format('{0}/{1}', variables('clusterName'), parameters('applicationName'))]",
+            "apiVersion": "[variables('sfApiVersion')]",
+            "type": "Microsoft.ServiceFabric/clusters/applications",
+            "location": "[variables('location')]",
+            "properties": {
+                "typeName": "[parameters('applicationTypeName')]",
+                "typeVersion": "[parameters('applicationTypeVersion')]",
+                "upgradePolicy": {
+                    "upgradeReplicaSetCheckTimeout": "01:00:00.0",
+                    "forceRestart": false,
+                    "rollingUpgradeMonitoringPolicy": {
+                        "healthCheckWaitDuration": "00:00:00.0",
+                        "healthCheckStableDuration": "00:02:00.0",
+                        "healthCheckRetryTimeout": "00:10:00.0",
+                        "upgradeTimeout": "05:00:00.0",
+                        "upgradeDomainTimeout": "02:00:00.0"
+                    },
+                    "applicationHealthPolicy": {
+                        "considerWarningAsError": false,
+                        "maxPercentUnhealthyDeployedApplications": 50,
+                        "defaultServiceTypeHealthPolicy": {
+                            "maxPercentUnhealthyServices": 50,
+                            "maxPercentUnhealthyPartitionsPerService": 50,
+                            "maxPercentUnhealthyReplicasPerPartition": 50
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.ServiceFabric/clusters/', variables('clusterName'), '/applicationTypes/', parameters('applicationTypeName'), '/versions/', parameters('applicationTypeVersion'))]"
+            ]
+        },
+        {
+            "name": "[format('{0}/{1}/{1}~{2}', variables('clusterName'), parameters('applicationName'), 'MyStatelessService')]",
+            "apiVersion": "[variables('sfApiVersion')]",
+            "type": "Microsoft.ServiceFabric/clusters/applications/services",
+            "location": "[variables('location')]",
+            "properties": {
+                "serviceKind": "Stateless",
+                "serviceTypeName": "[parameters('serviceTypeName')]",
+                "instanceCount": "[parameters('instanceCount')]",
+                "partitionDescription": {
+                    "partitionScheme": "Singleton"
+                },
+                "serviceLoadMetrics": [],
+                "servicePlacementPolicies": []
+            },
+            "dependsOn": [
+                "[concat('Microsoft.ServiceFabric/clusters/', variables('clusterName'), '/applications/', parameters('applicationName'))]"
+            ]
+        }
+    ]
+}
