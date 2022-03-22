@@ -3,25 +3,25 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectName": {
-      "value": "tu"
+      "value": "#{arm.project.name}#"
     },
     "serviceName": {
-      "value": "sf"
+      "value": "#{arm.service.name}#"
     },
     "environmentName": {
-      "value": "test"
+      "value": "#{arm.environment.name}#"
     },
     "adminUserName": {
-      "value": "furyd"
+      "value": "#{arm.vm.administrator.username}#"
     },
     "adminPassword": {
-      "value": "TestingTesting123!"
+      "value": "#{arm.vm.administrator.password}#"
     },
     "certificateThumbprint": {
-      "value": "C7C6C6FA2079CBDCC10771F9A7A097F86899A153"
+      "value": "#{arm.certificate.thumbprint}#"
     },
     "dnsName": {
-      "value": "bob"
+      "value": "#{arm.dns.name}#"
     }
   }
 }
