@@ -29,6 +29,8 @@ steps:
 - task: AzurePowerShell@5
   displayName: Create certificate
   inputs:
+    azureSubscription: $(arm.subscription)
+    azurePowerShellVersion: latestVersion
     inline: |
       $KeyVaultName = "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)"
       $KeyVaultCertificateName = "$(arm.project.name)-$(arm.service.name)-cert-$(arm.environment.name)"
