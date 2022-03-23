@@ -81,6 +81,26 @@ steps:
       Write-Host "##vso[task.setvariable variable=arm.certificate.password;]"
   displayName: Create certificate
 
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: $(arm.subscription)
+    azurePowerShellVersion: latestVersion
+    pwsh: true
+    scriptType: inlineScript
+    inline: |
+
+      $resourceGroupName = "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)"
+
+      New-AzServiceFabricCluster -ResourceGroupName $resourceGroupName `
+        -Location $(arm.location.name) `
+        -ClusterSize 5 `
+        -VmPassword $(arm.vm.administrator.password) `
+        -CertificateSubjectName $(arm.dns.name) `
+        -SecretIdentifier $(arm.certificate.uri) `
+        -OS WindowsServer2016Datacenter
+
+  displayName: Create cluster
+
 - task: qetza.replacetokens.replacetokens-task.replacetokens@4
   displayName: 'Replace tokens in parameters'
   inputs:
