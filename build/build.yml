@@ -81,42 +81,6 @@ steps:
       Write-Host "##vso[task.setvariable variable=arm.certificate.password;]"
   displayName: Create certificate
 
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: $(arm.subscription)
-    azurePowerShellVersion: latestVersion
-    pwsh: true
-    scriptType: inlineScript
-    inline: |
-
-      $resourceGroupName = "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)"
-      $password = "$(arm.vm.administrator.password)" | ConvertTo-SecureString -AsPlainText -Force
-
-      New-AzServiceFabricCluster -ResourceGroupName $resourceGroupName `
-        -Location $(arm.location.name) `
-        -ClusterSize 5 `
-        -VmPassword $password `
-        -SecretIdentifier $(arm.certificate.uri) `
-        -OS WindowsServer2016Datacenter
-
-  displayName: Create cluster
-
-- task: qetza.replacetokens.replacetokens-task.replacetokens@4
-  displayName: 'Replace tokens in parameters'
-  inputs:
-    rootDirectory: build
-    targetFiles: '**/*.service-connection.json'
-
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: $(arm.subscription)
-    azurePowerShellVersion: latestVersion
-    pwsh: true
-    scriptType: inlineScript
-    inline: |
-      az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
-  displayName: Create service connection
-
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
   inputs:
@@ -169,12 +133,12 @@ steps:
   displayName: Replace tokens in parameters
   inputs:
     rootDirectory: deploy
-    targetFiles: '**/*.parameters.devops.json'
-  enabled: false
+    targetFiles: |
+      '**/*.parameters.devops.json'
+      '**/*.service-connection.json'
 
 - task: PublishBuildArtifacts@1
   displayName: Publish ARM Templates
   inputs:
     PathtoPublish: deploy
     ArtifactName: ARM Templates
-  enabled: false
