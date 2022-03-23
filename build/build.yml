@@ -58,10 +58,10 @@ steps:
     $Content = [System.Convert]::ToBase64String($ContentBytes)
 
     $SecretValue = ConvertTo-SecureString -String $Content -AsPlainText -Force
+    $SecretBase64Value = ConvertTo-SecureString -String $Base64 -AsPlainText -Force
     $CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $Base64 -Verbose
+    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretBase64Value $Base64 -Verbose
     $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
-
 
     Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
     Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($CertificateSecret.Id)"
