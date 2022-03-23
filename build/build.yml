@@ -51,6 +51,7 @@ steps:
         Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($certificate.SecretId)"
         Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($certificate.Thumbprint)"
         Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
+        Write-Host "##vso[task.setvariable variable=arm.certificate.password;]"
 
         Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $secret.SecretValue
 
@@ -77,10 +78,24 @@ steps:
       Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($certificate.SecretId)"
       Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($certificate.Thumbprint)"
       Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.password;]"
   displayName: Create certificate
 
-- powershell: 'dir env:'
-  displayName: Output variables
+- task: qetza.replacetokens.replacetokens-task.replacetokens@4
+  displayName: 'Replace tokens in parameters'
+  inputs:
+    rootDirectory: build
+    targetFiles: '**/*.service-connection.json'
+
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: $(arm.subscription)
+    azurePowerShellVersion: latestVersion
+    pwsh: true
+    scriptType: inlineScript
+    inline: |
+      az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
+  displayName: Create service connection
 
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
