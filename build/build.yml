@@ -49,7 +49,7 @@ steps:
     $JSONBlob = @{
         data = $Base64
         dataType = 'pfx'
-        password = $(arm.vm.administrator.password)
+        password = "$(arm.vm.administrator.password)"
     } | ConvertTo-Json
 
     $ContentBytes = [System.Text.Encoding]::UTF8.GetBytes($JSONBlob)
