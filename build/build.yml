@@ -31,6 +31,7 @@ steps:
     azureSubscription: $(arm.subscription)
     azurePowerShellVersion: latestVersion
     pwsh: true
+    scriptType: inlineScript
     inline: |
       Install-Module Az.KeyVault -Scope CurrentUser -Force
 
