@@ -90,11 +90,12 @@ steps:
     inline: |
 
       $resourceGroupName = "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)"
+      $password = "$(arm.vm.administrator.password)" | ConvertTo-SecureString -AsPlainText -Force
 
       New-AzServiceFabricCluster -ResourceGroupName $resourceGroupName `
         -Location $(arm.location.name) `
         -ClusterSize 5 `
-        -VmPassword $(arm.vm.administrator.password) `
+        -VmPassword $password `
         -CertificateSubjectName $(arm.dns.name) `
         -SecretIdentifier $(arm.certificate.uri) `
         -OS WindowsServer2016Datacenter
