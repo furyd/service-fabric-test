@@ -65,7 +65,7 @@ steps:
 
       $SecretValue = ConvertTo-SecureString -String $Content -AsPlainText -Force
       $SecretBase64Value = ConvertTo-SecureString -String $Base64 -AsPlainText -Force
-      $CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
+      #$CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
       Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $SecretBase64Value -Verbose
       $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
 
