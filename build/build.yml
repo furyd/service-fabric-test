@@ -26,45 +26,47 @@ steps:
 - powershell: 'dir env:'
   displayName: Output variables
 
-- powershell: |
-    $KeyVaultName = "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)"
-    $KeyVaultCertificateName = "$(arm.project.name)-$(arm.service.name)-cert-$(arm.environment.name)"
-    $KeyVaultBase64Name = "$(arm.project.name)-$(arm.service.name)-cert-base64-$(arm.environment.name)"
-
-    Write-Host "Key Vault: $($KeyVaultName)"
-    Write-Host "Certificate Key: $($KeyVaultCertificateName)"
-    Write-Host "Base64 Key: $($KeyVaultBase64Name)"
-
-    $SecurePassword = ConvertTo-SecureString -String $(arm.vm.administrator.password) -AsPlainText -Force
-    $CertFileFullPath = $(Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "\$(arm.dns.name).pfx")
-
-    Write-Host "Path: $($CertFileFullPath)"
-
-    $NewCert = New-SelfSignedCertificate -CertStoreLocation Cert:\CurrentUser\My -DnsName $(arm.dns.name)
-    Export-PfxCertificate -FilePath $CertFileFullPath -Password $SecurePassword -Cert $NewCert
-
-    $Bytes = [System.IO.File]::ReadAllBytes($CertFileFullPath)
-    $Base64 = [System.Convert]::ToBase64String($Bytes)
-
-    $JSONBlob = @{
-        data = $Base64
-        dataType = 'pfx'
-        password = "$(arm.vm.administrator.password)"
-    } | ConvertTo-Json
-
-    $ContentBytes = [System.Text.Encoding]::UTF8.GetBytes($JSONBlob)
-    $Content = [System.Convert]::ToBase64String($ContentBytes)
-
-    $SecretValue = ConvertTo-SecureString -String $Content -AsPlainText -Force
-    $CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
-    Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $Base64 -Verbose
-    $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
-
-
-    Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
-    Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($CertificateSecret.Id)"
-    Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($CertificateCert.Thumbprint)"
+- task: AzurePowerShell@5
   displayName: Create certificate
+  inputs:
+    inline: |
+      $KeyVaultName = "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)"
+      $KeyVaultCertificateName = "$(arm.project.name)-$(arm.service.name)-cert-$(arm.environment.name)"
+      $KeyVaultBase64Name = "$(arm.project.name)-$(arm.service.name)-cert-base64-$(arm.environment.name)"
+
+      Write-Host "Key Vault: $($KeyVaultName)"
+      Write-Host "Certificate Key: $($KeyVaultCertificateName)"
+      Write-Host "Base64 Key: $($KeyVaultBase64Name)"
+
+      $SecurePassword = ConvertTo-SecureString -String $(arm.vm.administrator.password) -AsPlainText -Force
+      $CertFileFullPath = $(Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "\$(arm.dns.name).pfx")
+
+      Write-Host "Path: $($CertFileFullPath)"
+
+      $NewCert = New-SelfSignedCertificate -CertStoreLocation Cert:\CurrentUser\My -DnsName $(arm.dns.name)
+      Export-PfxCertificate -FilePath $CertFileFullPath -Password $SecurePassword -Cert $NewCert
+
+      $Bytes = [System.IO.File]::ReadAllBytes($CertFileFullPath)
+      $Base64 = [System.Convert]::ToBase64String($Bytes)
+
+      $JSONBlob = @{
+          data = $Base64
+          dataType = 'pfx'
+          password = "$(arm.vm.administrator.password)"
+      } | ConvertTo-Json
+
+      $ContentBytes = [System.Text.Encoding]::UTF8.GetBytes($JSONBlob)
+      $Content = [System.Convert]::ToBase64String($ContentBytes)
+
+      $SecretValue = ConvertTo-SecureString -String $Content -AsPlainText -Force
+      $CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
+      Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $Base64 -Verbose
+      $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
+
+
+      Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($CertificateSecret.Id)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($CertificateCert.Thumbprint)"
 
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
