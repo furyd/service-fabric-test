@@ -37,60 +37,40 @@ steps:
 
       $KeyVaultName = "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)"
       $KeyVaultCertificateName = "$(arm.project.name)-$(arm.service.name)-cert-$(arm.environment.name)"
-      #$KeyVaultBase64Name = "$(arm.project.name)-$(arm.service.name)-cert-base64-$(arm.environment.name)"
+
+      $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
+      $certificate = Get-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $KeyVaultCertificateName
+
+      if($certificate -ne $null){
+
+        $secret = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $certificate.Name
+        $base64 = $secret.SecretValue | ConvertFrom-SecureString -AsPlainText
+
+        Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
+        Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($certificate.SecretId)"
+        Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($certificate.Thumbprint)"
+        Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
+
+        exit;
+      }
 
       $Policy = New-AzKeyVaultCertificatePolicy -SecretContentType "application/x-pkcs12" -SubjectName "CN=test" -IssuerName "Self" -ValidityInMonths 6 -ReuseKeyOnRenewal
 
       $operation = Add-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $KeyVaultCertificateName -CertificatePolicy $Policy
 
       while($operation.Status -ne 'completed'){
-        #Write-Host "Status: $($operation.Status)"
+        Write-Host "Status: $($operation.Status)"
         $operation = Get-AzKeyVaultCertificateOperation -VaultName $KeyVaultName -Name $KeyVaultCertificateName
       }
 
       $certificate = Get-AzKeyVaultCertificate -VaultName $KeyVaultName -Name $KeyVaultCertificateName
       $secret = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $certificate.Name
       $base64 = $secret.SecretValue | ConvertFrom-SecureString -AsPlainText
-      $resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
 
-      #Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
-      #Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($certificate.SecretId)"
-      #Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($certificate.Thumbprint)"
-      #Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
-
-      #Write-Host "Key Vault: $($KeyVaultName)"
-      #Write-Host "Certificate Key: $($KeyVaultCertificateName)"
-      #Write-Host "Base64 Key: $($KeyVaultBase64Name)"
-
-      #$SecurePassword = ConvertTo-SecureString -String $(arm.vm.administrator.password) -AsPlainText -Force
-      #$CertFileFullPath = $(Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "\$(arm.dns.name).pfx")
-
-      #Write-Host "Path: $($CertFileFullPath)"
-
-      #$NewCert = New-SelfSignedCertificate -CertStoreLocation Cert:\CurrentUser\My -DnsName $(arm.dns.name)
-      #Export-PfxCertificate -FilePath $CertFileFullPath -Password $SecurePassword -Cert $NewCert
-
-      #$Bytes = [System.IO.File]::ReadAllBytes($CertFileFullPath)
-      #$Base64 = [System.Convert]::ToBase64String($Bytes)
-
-      #$JSONBlob = @{
-      #    data = $Base64
-      #    dataType = 'pfx'
-      #    password = "$(arm.vm.administrator.password)"
-      #} | ConvertTo-Json
-
-      #$ContentBytes = [System.Text.Encoding]::UTF8.GetBytes($JSONBlob)
-      #$Content = [System.Convert]::ToBase64String($ContentBytes)
-
-      #$SecretValue = ConvertTo-SecureString -String $Content -AsPlainText -Force
-      #$SecretBase64Value = ConvertTo-SecureString -String $Base64 -AsPlainText -Force
-      #$CertificateSecret = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultCertificateName -SecretValue $SecretValue -Verbose
-      #Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $KeyVaultBase64Name -SecretValue $SecretBase64Value -Verbose
-      #$resourceId = $(Get-AzKeyVault -VaultName $KeyVaultName).ResourceId
-
-      #Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
-      #Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($CertificateSecret.Id)"
-      #Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($CertificateCert.Thumbprint)"
+      Write-Host "##vso[task.setvariable variable=arm.keyvault.resourceId;]$($resourceId)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.uri;]$($certificate.SecretId)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.thumbprint;]$($certificate.Thumbprint)"
+      Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
   displayName: Create certificate
 
 - task: DotNetCoreCLI@2
