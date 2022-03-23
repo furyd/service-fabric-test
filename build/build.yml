@@ -96,7 +96,6 @@ steps:
         -Location $(arm.location.name) `
         -ClusterSize 5 `
         -VmPassword $password `
-        -CertificateSubjectName $(arm.dns.name) `
         -SecretIdentifier $(arm.certificate.uri) `
         -OS WindowsServer2016Datacenter
 
