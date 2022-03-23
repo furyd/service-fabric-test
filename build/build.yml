@@ -73,6 +73,9 @@ steps:
       Write-Host "##vso[task.setvariable variable=arm.certificate.base64;]$($base64)"
   displayName: Create certificate
 
+- powershell: 'dir env:'
+  displayName: Output variables
+
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
   inputs:
