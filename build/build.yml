@@ -129,13 +129,14 @@ steps:
     ArtifactName: package
   enabled: false
 
-- task: qetza.replacetokens.replacetokens-task.replacetokens@4
+- task: qetza.replacetokens.replacetokens-task.replacetokens@5
   displayName: Replace tokens in parameters
   inputs:
     rootDirectory: deploy
     targetFiles: |
-      '**/*.parameters.devops.json'
-      '**/*.service-connection.json'
+     **/*.parameters.devops.json
+     **/*.service-connection.json
+    verbosity: detailed
 
 - task: PublishBuildArtifacts@1
   displayName: Publish ARM Templates
