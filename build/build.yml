@@ -14,14 +14,12 @@ steps:
   displayName: 'Install GitTools'
   inputs:
     versionSpec: '5.x'
-  enabled: false
 
 - task: gitversion/execute@0
   displayName: 'Calculate SemVer'
   inputs:
     useConfigFile: true
     configFilePath: $(System.DefaultWorkingDirectory)\build\GitVersion.yml
-  enabled: false
 
 - powershell: 'dir env:'
   displayName: Output variables
