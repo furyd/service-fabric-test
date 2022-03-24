@@ -1,0 +1,34 @@
+trigger: none
+resources:
+  pipelines:
+  - pipeline: Infrastructure
+    source: furyd.service-fabric-test
+
+variables:
+- group: TU-TEST
+
+jobs:
+- deployment:
+  displayName: Deploy infrastructure
+
+  pool:
+    vmImage: windows-latest
+
+  environment: sftest-${{ parameters.environment }}
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - powershell: 'dir env:'
+            displayName: 'Print variables'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy anywellbeing infrastructure'
+            inputs:
+              azureResourceManagerConnection: $(arm.connection)
+              subscriptionId: $(arm.subscription)
+              resourceGroupName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)
+              location: $(arm.location)
+              csmFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/deploy/azuredeploy.json
+              csmParametersFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/deploy/azuredeploy.parameters.devops.json
