@@ -14,7 +14,7 @@ jobs:
   pool:
     vmImage: windows-latest
 
-  environment: sftest-${{ parameters.environment }}
+  environment: sftest-${{ arm.environment.name }}
 
   strategy:
     runOnce:
