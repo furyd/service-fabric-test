@@ -11,17 +11,47 @@
     "environmentName": {
       "value": "#{arm.environment.name}#"
     },
+    "location": {
+      "value": "#{arm.location.name}#"
+    },
     "adminUserName": {
       "value": "#{arm.vm.administrator.username}#"
     },
     "adminPassword": {
       "value": "#{arm.vm.administrator.password}#"
     },
+    "sourceVaultValue": {
+        "value": "#{arm.keyvault.resourceId}#"
+    },
+    "certificateUrlValue": {
+        "value": "#{arm.certificate.uri}#"
+    },
     "certificateThumbprint": {
       "value": "#{arm.certificate.thumbprint}#"
     },
-    "dnsName": {
-      "value": "#{arm.dns.name}#"
+    "vmImageSku": {
+        "value": "Datacenter-Core-1709-smalldisk"
+    },
+    "vmImageOffer": {
+        "value": "WindowsServerSemiAnnual"
+    },
+    "nt0ephemeralStartPort": {
+        "value": 49152
+    },
+    "nt0ephemeralEndPort": {
+        "value": 65534
+    },
+    "nt0applicationStartPort": {
+        "value": 20000
+    },
+    "nt0applicationEndPort": {
+        "value": 30000
+    },
+    "nt0fabricTcpGatewayPort": {
+        "value": 19000
+    },
+    "nt0fabricHttpGatewayPort": {
+        "value": 19080
     }
   }
 }
