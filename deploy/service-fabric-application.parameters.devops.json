@@ -21,7 +21,7 @@
       "value": "#{arm.application.type.name}#"
     },
     "applicationTypeVersion": {
-      "value": "#{arm.application.type.version}#"
+      "value": "#{build.buildnumber}#"
     },
     "serviceTypeName": {
       "value": "#{arm.service.type.name}#"
