@@ -23,8 +23,8 @@ jobs:
           - powershell: 'dir env:'
             displayName: 'Print variables'
 
-          - powershell: 'Get-ChildItem -Recurse $(Pipeline.Workspace) | Select Name,FullName,Length'
-            displayName: 'Print files'
+          # - powershell: 'Get-ChildItem -Recurse $(Pipeline.Workspace) | Select Name,FullName,Length'
+          #   displayName: 'Print files'
 
           - task: AzureResourceManagerTemplateDeployment@3
             displayName: 'Deploy anywellbeing infrastructure'
@@ -33,5 +33,5 @@ jobs:
               subscriptionId: $(arm.subscription)
               resourceGroupName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)
               location: $(arm.location)
-              csmFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/deploy/azuredeploy.json
-              csmParametersFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/deploy/azuredeploy.parameters.devops.json
+              csmFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/azuredeploy.json
+              csmParametersFile: $(Pipeline.Workspace)/Infrastructure/ARM Templates/azuredeploy.parameters.devops.json
