@@ -13,21 +13,21 @@
     "data": {},
     "description": "",
     "groupScopeId": null,
-    "name": "#{arm.project.name}#-#{arm.service.name}#-#{arm.environment.name}-sf-connection",
+    "name": "#{arm.project.name}#-#{arm.service.name}#-#{arm.environment.name}#-sf-connection",
     "operationStatus": null,
     "readersGroup": null,
     "serviceEndpointProjectReferences": [
         {
             "description": "",
-            "name": "#{arm.project.name}#-#{arm.service.name}#-#{arm.environment.name}-sf-connection",
+            "name": "#{arm.project.name}#-#{arm.service.name}#-#{arm.environment.name}#-sf-connection",
             "projectReference": {
-                "id": "#{system.teamProjectId}",
-                "name": "#{system.teamProject}"
+                "id": "#{system.teamProjectId}#",
+                "name": "#{system.teamProject}#"
             }
         }
     ],
     "type": "servicefabric",
-    "url": "tcp://#{arm.project.name}#-#{arm.service.name}-cluster-#{arm.environment.name}.#{arm.location.name}.cloudapp.azure.com:19000",
+    "url": "tcp://#{arm.project.name}#-#{arm.service.name}#-cluster-#{arm.environment.name}#.#{arm.location.name}#.cloudapp.azure.com:19000",
     "isShared": false,
     "owner": "library"
 }
