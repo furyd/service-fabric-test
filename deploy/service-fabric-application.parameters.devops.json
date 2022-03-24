@@ -12,7 +12,7 @@
       "value": "#{arm.environment.name}#"
     },
     "appPackageUrl": {
-      "value": "#{AzureFileCopy.StorageContainerUri)}##{arm.package.name)}##{AzureFileCopy.StorageContainerSasToken)}#"
+      "value": "#{AzureFileCopy.StorageContainerUri}##{arm.package.name}##{AzureFileCopy.StorageContainerSasToken}#"
     },
     "applicationName": {
       "value": "#{arm.application.name}#"
