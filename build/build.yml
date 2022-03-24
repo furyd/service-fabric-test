@@ -84,14 +84,12 @@ steps:
   inputs:
     command: restore
     projects: 'src/**/*.csproj'
-  enabled: false
 
 - task: NuGetCommand@2
   displayName: Restore NuGet for Service Fabric projects
   inputs:
     restoreSolution: src/**/*.sfproj
     restoreDirectory: ../../packages
-  enabled: false
 
 - task: DotNetCoreCLI@2
   displayName: Publish Service Fabric Project
@@ -99,7 +97,6 @@ steps:
     projects: src/**/*.sfproj
     packDirectory: $(Build.ArtifactStagingDirectory)\\drop\\package
     arguments: '-c Release /p:Platform=x64 /p:Version=$(Build.BuildNumber) /t:Package /p:PackageLocation=$(Build.ArtifactStagingDirectory)\drop\package'
-  enabled: false
 
 - task: ServiceFabricUpdateManifests@2
   displayName: Update Service Fabric Version (Release)
@@ -107,7 +104,6 @@ steps:
     applicationPackagePath: $(Build.ArtifactStagingDirectory)\\drop\\package
     versionSuffix: $(Build.BuildNumber)
     versionBehavior: Replace
-  enabled: false
 
 - task: CopyFiles@2
   displayName: Copy XML Files To Artifacts (Release)
@@ -118,14 +114,12 @@ steps:
      **\*.ServiceFabric\ApplicationParameters\*.xml
     TargetFolder: '$(Build.ArtifactStagingDirectory)\drop\projectartifacts\'
     CleanTargetFolder: true
-  enabled: false
 
 - task: PublishBuildArtifacts@1
   displayName: Publish Package
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)\\drop\\package
     ArtifactName: package
-  enabled: false
 
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
   displayName: Replace tokens in parameters
@@ -134,7 +128,6 @@ steps:
     targetFiles: |
      **/*.parameters.devops.json
      **/*.service-connection.json
-    verbosity: detailed
 
 - task: PublishBuildArtifacts@1
   displayName: Publish ARM Templates
