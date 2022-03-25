@@ -1,0 +1,46 @@
+trigger: none
+resources:
+  pipelines:
+  - pipeline: Site
+    source: furyd.service-fabric-test
+
+variables:
+- group: TU-TEST
+
+jobs:
+- deployment:
+  displayName: Deploy package
+
+  pool:
+    vmImage: windows-latest
+
+  environment: sftest-test
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - powershell: 'dir env:'
+            displayName: 'Print variables'
+
+          - task: AzurePowerShell@5
+            displayName: Create service connection
+            inputs:
+              azureSubscription: $(arm.connection)
+              azurePowerShellVersion: latestVersion
+              pwsh: true
+              scriptType: inlineScript
+              inline: |
+                $connection = az devops service-endpoint show $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
+
+                if($connection -ne $null){
+                  exit
+                }
+
+                az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
+
+           - task: ServiceFabricDeploy@1
+              displayName: Deploy app
+              inputs:
+                applicationPackagePath: $(Pipeline.Workspace)/package
+                serviceConnectionName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
