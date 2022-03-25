@@ -141,10 +141,10 @@ steps:
     ArtifactName: package
 
 - task: PublishBuildArtifacts@1
-  displayName: Publish Package Artefacts
+  displayName: Publish Package Artifacts
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)\drop\projectartifacts\
-    ArtifactName: package
+    ArtifactName: package-artifacts
 
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
   displayName: Replace tokens in parameters
