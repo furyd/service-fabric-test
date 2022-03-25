@@ -33,3 +33,7 @@ jobs:
               serviceConnectionName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
               applicationParameterPath: $(Pipeline.Workspace)\Site\package-artifacts\FlexibleExample.ServiceFabric\ApplicationParameters\cloud.xml
               publishProfilePath: $(Pipeline.Workspace)\Site\package-artifacts\FlexibleExample.ServiceFabric\PublishProfiles\cloud.xml
+              unregisterUnusedVersions: true
+              #overwriteBehavior: 'SameAppTypeAndVersion'
+              #overwriteBehavior: 'Always'
+              #overwriteBehavior: 'Never'
