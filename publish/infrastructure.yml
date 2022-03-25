@@ -27,7 +27,7 @@ jobs:
           #   displayName: 'Print files'
 
           - task: AzureResourceManagerTemplateDeployment@3
-            displayName: 'Deploy anywellbeing infrastructure'
+            displayName: 'Deploy infrastructure'
             inputs:
               azureResourceManagerConnection: $(arm.connection)
               subscriptionId: $(arm.subscription)

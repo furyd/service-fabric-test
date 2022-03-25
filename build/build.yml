@@ -26,7 +26,7 @@ steps:
 
 - task: AzurePowerShell@5
   inputs:
-    azureSubscription: $(arm.subscription)
+    azureSubscription: $(arm.connection)
     azurePowerShellVersion: latestVersion
     pwsh: true
     scriptType: inlineScript
