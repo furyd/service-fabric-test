@@ -40,7 +40,7 @@ jobs:
 
                 Write-Host "Create $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection"
 
-                $test = az devops service-endpoint create --org davidfury --service-endpoint-configuration build\service-fabric.service-connection.json
+                $test = az devops service-endpoint create --org $(arm.organisation.uri) --service-endpoint-configuration build\service-fabric.service-connection.json
 
                 $test
 
