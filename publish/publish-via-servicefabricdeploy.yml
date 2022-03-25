@@ -34,10 +34,15 @@ jobs:
                 $connection = az devops service-endpoint show $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
 
                 if($connection -ne $null){
+                  Write-Host "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection already exists"
                   exit
                 }
 
-                az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
+                Write-Host "Create $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection"
+
+                $test = az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
+
+                $test
 
           # - task: ServiceFabricDeploy@1
           #   displayName: Deploy app
