@@ -25,6 +25,25 @@ steps:
   displayName: Output variables
 
 - task: AzurePowerShell@5
+  displayName: Create service connection
+  inputs:
+    azureSubscription: $(arm.connection)
+    azurePowerShellVersion: latestVersion
+    pwsh: true
+    scriptType: inlineScript
+    inline: |
+      #$connection = az devops service-endpoint show --org $(arm.organisation.uri) --project $(arm.organisation.project.name) --id $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
+
+      #if($connection -ne $null){
+        #Write-Host "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection already exists"
+        #exit
+      #}
+
+      Write-Host "Create $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection"
+
+      az devops service-endpoint create --org $(arm.organisation.uri) --project $(arm.organisation.project.name) --service-endpoint-configuration '$(Pipeline.Workspace)/Site/ARM Templates/service-fabric.service-connection.json'
+
+- task: AzurePowerShell@5
   inputs:
     azureSubscription: $(arm.connection)
     azurePowerShellVersion: latestVersion
