@@ -39,8 +39,8 @@ jobs:
 
                 az devops service-endpoint create --service-endpoint-configuration build\service-fabric.service-connection.json
 
-           - task: ServiceFabricDeploy@1
-              displayName: Deploy app
-              inputs:
-                applicationPackagePath: $(Pipeline.Workspace)/package
-                serviceConnectionName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
+          - task: ServiceFabricDeploy@1
+            displayName: Deploy app
+            inputs:
+              applicationPackagePath: $(Pipeline.Workspace)/package
+              serviceConnectionName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
