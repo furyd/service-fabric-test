@@ -98,6 +98,15 @@ steps:
       Write-Host "##vso[task.setvariable variable=arm.certificate.password;]"
   displayName: Create certificate
 
+- task: qetza.replacetokens.replacetokens-task.replacetokens@5
+  displayName: Replace tokens in parameters
+  inputs:
+    rootDirectory: deploy
+    targetFiles: |
+      **/*.parameters.devops.json
+      **/*.service-connection.json
+      **/ApplicationManifest.devops.xml => ApplicationManifest.xml
+
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
   inputs:
@@ -114,7 +123,7 @@ steps:
   displayName: Publish Service Fabric Project
   inputs:
     projects: src/**/*.sfproj
-    packDirectory: $(Build.ArtifactStagingDirectory)\\drop\\package
+    packDirectory: $(Build.ArtifactStagingDirectory)\drop\package
     arguments: '-c Release /p:Platform=x64 /p:Version=$(Build.BuildNumber) /t:Package /p:PackageLocation=$(Build.ArtifactStagingDirectory)\drop\package'
 
 - task: ServiceFabricUpdateManifests@2
@@ -145,14 +154,6 @@ steps:
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)\drop\projectartifacts\
     ArtifactName: package-artifacts
-
-- task: qetza.replacetokens.replacetokens-task.replacetokens@5
-  displayName: Replace tokens in parameters
-  inputs:
-    rootDirectory: deploy
-    targetFiles: |
-     **/*.parameters.devops.json
-     **/*.service-connection.json
 
 - task: PublishBuildArtifacts@1
   displayName: Publish ARM Templates
