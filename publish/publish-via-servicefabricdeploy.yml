@@ -23,6 +23,9 @@ jobs:
           - powershell: 'dir env:'
             displayName: 'Print variables'
 
+          - powershell: 'Get-ChildItem -Recurse $(Pipeline.Workspace) | Select Name,FullName,Length'
+            displayName: 'Print files'
+
           - task: ServiceFabricDeploy@1
             displayName: Deploy app
             inputs:
