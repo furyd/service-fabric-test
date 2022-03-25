@@ -1,0 +1,54 @@
+trigger: none
+resources:
+  pipelines:
+  - pipeline: Site
+    source: furyd.service-fabric-test
+
+variables:
+- group: TU-TEST
+
+jobs:
+- deployment:
+  displayName: Deploy package
+
+  pool:
+    vmImage: windows-latest
+
+  environment: sftest-test
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - powershell: 'dir env:'
+            displayName: 'Print variables'
+
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: $(Pipeline.Workspace)/Site/Package
+              archiveFile: $(arm.package.name)
+
+          - task: AzureFileCopy@4
+            inputs:
+              sourcePath: $(arm.package.name)
+              azureSubscription: $(arm.subscription)
+              destination: azureBlob
+              storage: $(arm.project.name)$(arm.service.name)storage$(arm.environment.name)
+              container: $(build.buildnumber)
+
+          - task: qetza.replacetokens.replacetokens-task.replacetokens@5
+            displayName: Replace tokens in parameters
+            inputs:
+              rootDirectory: deploy
+              targetFiles: |
+              $(Pipeline.Workspace)/Site/ARM Templates/service-fabric-application.parameters.devops.json
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Deploy infrastructure'
+            inputs:
+              azureResourceManagerConnection: $(arm.connection)
+              subscriptionId: $(arm.subscription)
+              resourceGroupName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)
+              location: $(arm.location)
+              csmFile: $(Pipeline.Workspace)/Site/ARM Templates/service-fabric-application.json
+              csmParametersFile: $(Pipeline.Workspace)/Site/ARM Templates/service-fabric-application.parameters.devops.json
