@@ -120,7 +120,7 @@ steps:
 - task: ServiceFabricUpdateManifests@2
   displayName: Update Service Fabric Version (Release)
   inputs:
-    applicationPackagePath: $(Build.ArtifactStagingDirectory)\\drop\\package
+    applicationPackagePath: $(Build.ArtifactStagingDirectory)\drop\package
     versionSuffix: $(Build.BuildNumber)
     versionBehavior: Replace
 
@@ -137,7 +137,13 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: Publish Package
   inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)\\drop\\package
+    PathtoPublish: $(Build.ArtifactStagingDirectory)\drop\package
+    ArtifactName: package
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Package Artefacts
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)\drop\projectartifacts\
     ArtifactName: package
 
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
