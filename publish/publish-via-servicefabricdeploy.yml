@@ -35,5 +35,5 @@ jobs:
               publishProfilePath: $(Pipeline.Workspace)\Site\package-artifacts\FlexibleExample.ServiceFabric\PublishProfiles\cloud.xml
               unregisterUnusedVersions: true
               #overwriteBehavior: 'SameAppTypeAndVersion'
-              #overwriteBehavior: 'Always'
+              overwriteBehavior: 'Always'
               #overwriteBehavior: 'Never'
