@@ -106,7 +106,7 @@ steps:
     targetFiles: |
       **/*.parameters.devops.json
       **/*.service-connection.json
-      src/FlexibleExample.ServiceFabric/ApplicationPackageRoot/ApplicationManifest.devops.xml => src/FlexibleExample.ServiceFabric/ApplicationPackageRoot/ApplicationManifest2.xml
+      **/*.devops.xml
 
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet for .NET projects
