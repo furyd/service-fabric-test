@@ -102,6 +102,7 @@ steps:
   displayName: Replace tokens in parameters
   inputs:
     rootDirectory: deploy
+    verbosity: detailed
     targetFiles: |
       **/*.parameters.devops.json
       **/*.service-connection.json
