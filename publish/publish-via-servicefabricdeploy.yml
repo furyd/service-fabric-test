@@ -26,5 +26,5 @@ jobs:
           - task: ServiceFabricDeploy@1
             displayName: Deploy app
             inputs:
-              applicationPackagePath: $(Pipeline.Workspace)/package
+              applicationPackagePath: $(Pipeline.Workspace)/Site/package
               serviceConnectionName: $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
