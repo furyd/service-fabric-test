@@ -31,7 +31,7 @@ jobs:
               pwsh: true
               scriptType: inlineScript
               inline: |
-                $connection = az devops service-endpoint show $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
+                $connection = az devops service-endpoint show --org $(arm.organisation.uri) --project $(arm.organisation.project.name) --id $(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection
 
                 if($connection -ne $null){
                   Write-Host "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)-sf-connection already exists"
