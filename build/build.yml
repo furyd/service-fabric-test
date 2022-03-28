@@ -25,6 +25,44 @@ steps:
   displayName: Output variables
 
 - task: AzurePowerShell@5
+  displayName: Upsert Resource Group
+  inputs:
+    azureSubscription: $(arm.connection)
+    azurePowerShellVersion: latestVersion
+    pwsh: true
+    scriptType: inlineScript
+    inline: |
+      $resourceGroup = Get-AzResourceGroup -Name "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)"
+
+      if($null -ne $resourceGroup){
+        Write-Host "Resource group exists."
+        exit
+      }
+
+      Write-Host "Creating resource group"
+
+      New-AzResourceGroup -Name "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)" -Location "$(arm.location.name)"
+
+- task: AzurePowerShell@5
+  displayName: Upsert Key Vault
+  inputs:
+    azureSubscription: $(arm.connection)
+    azurePowerShellVersion: latestVersion
+    pwsh: true
+    scriptType: inlineScript
+    inline: |
+      $keyVault = Get-AzKeyVault -VaultName "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)"
+
+      if($null -ne $keyVault){
+        Write-Host "Key vault exists."
+        exit
+      }
+
+      Write-Host "Creating key vault"
+
+      New-AzKeyVault -VaultName "$(arm.project.name)-$(arm.service.name)-kv-$(arm.environment.name)" -ResourceGroupName "$(arm.project.name)-$(arm.service.name)-$(arm.environment.name)" -Location "$(arm.location.name)"
+
+- task: AzurePowerShell@5
   displayName: Create service connection
   inputs:
     azureSubscription: $(arm.connection)
