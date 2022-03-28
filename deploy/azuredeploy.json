@@ -509,6 +509,15 @@
               }
             ],
             "name": "Security"
+          },
+          {
+            "parameters": [
+              {
+                "name": "IsEnabled",
+                "value": "true"
+              }
+            ],
+            "name": "ManagedIdentityTokenService"
           }
         ],
         "managementEndpoint": "[concat('https://',reference(variables('lbIPName')).dnsSettings.fqdn,':',parameters('nt0fabricHttpGatewayPort'))]",
